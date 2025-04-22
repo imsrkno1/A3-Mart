@@ -1,79 +1,64 @@
 import React, { useState } from 'react';
-import { Search, Filter, Plus } from 'lucide-react';
+import Papa from 'papaparse';
 
-const Inventory = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+interface Product {
+  name: string;
+  brand: string;
+  price: number;
+  expiryDate: string;
+}
+
+export default function Inventory() {
+  const [inventory, setInventory] = useState<Product[]>([]);
+  const [form, setForm] = useState<Product>({ name: '', brand: '', price: 0, expiryDate: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: name === 'price' ? parseFloat(value) : value }));
+  };
+
+  const handleAdd = () => {
+    setInventory(prev => [...prev, form]);
+    setForm({ name: '', brand: '', price: 0, expiryDate: '' });
+  };
+
+  const handleCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const parsed = results.data as Product[];
+        setInventory(prev => [...prev, ...parsed]);
+      },
+    });
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Inventory Management</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2">
-          <Plus size={20} />
-          <span>Add Product</span>
-        </button>
+    <div className="p-4 space-y-4">
+      <h2 className="text-2xl font-bold">Inventory Management</h2>
+      <div className="space-y-2">
+        <input name="name" placeholder="Product Name" value={form.name} onChange={handleChange} className="border p-2 w-full" />
+        <input name="brand" placeholder="Brand" value={form.brand} onChange={handleChange} className="border p-2 w-full" />
+        <input name="price" placeholder="Price" type="number" value={form.price} onChange={handleChange} className="border p-2 w-full" />
+        <input name="expiryDate" type="date" value={form.expiryDate} onChange={handleChange} className="border p-2 w-full" />
+        <button onClick={handleAdd} className="bg-green-600 text-white px-4 py-2 rounded">Add Product</button>
       </div>
-
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        <div className="p-4 border-b dark:border-gray-700">
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
-              </div>
-            </div>
-            <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center space-x-2">
-              <Filter size={20} />
-              <span>Filter</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Product
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              <tr>
-                <td className="px-6 py-4" colSpan={6}>
-                  <div className="text-center text-gray-500 dark:text-gray-400">
-                    No products found. Add some products to get started.
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div>
+        <input type="file" accept=".csv" onChange={handleCSV} className="border p-2" />
+      </div>
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Inventory List</h3>
+        <ul className="space-y-1">
+          {inventory.map((item, idx) => (
+            <li key={idx} className="border p-2 rounded shadow">
+              <strong>{item.name}</strong> | Brand: {item.brand} | ₹{item.price} | Exp: {item.expiryDate}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
-};
-
-export default Inventory;
+}

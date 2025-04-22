@@ -45,7 +45,6 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Placeholder for charts and tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
           <h2 className="text-lg font-semibold mb-4">Recent Sales</h2>

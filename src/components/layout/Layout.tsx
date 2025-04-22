@@ -1,23 +1,25 @@
 import React from 'react';
-import Sidebar from './Sidebar';
-import Header from './Header';
+import { Link } from 'react-router-dom';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export default function Layout({ children }) {
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
-        </main>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-100 p-4">
+        <h2 className="text-xl font-bold mb-4">A3 Mart</h2>
+        <nav className="flex flex-col gap-2">
+          <Link to="/" className="text-blue-600 hover:underline">Dashboard</Link>
+          <Link to="/billing" className="text-blue-600 hover:underline">Billing</Link>
+          <Link to="/inventory" className="text-blue-600 hover:underline">Inventory</Link>
+          <Link to="/customers" className="text-blue-600 hover:underline">Customers</Link>
+          <Link to="/reports" className="text-blue-600 hover:underline">Reports</Link>
+        </nav>
       </div>
+
+      {/* Main content */}
+      <main className="flex-1 p-6 overflow-auto">
+        {children}
+      </main>
     </div>
   );
-};
-
-export default Layout;
+}

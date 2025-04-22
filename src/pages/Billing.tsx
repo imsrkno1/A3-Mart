@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Plus, User, ShoppingCart } from 'lucide-react';
+import { FaCashRegister } from 'react-icons/fa';
 
 const Billing = () => {
   const [barcode, setBarcode] = useState('');

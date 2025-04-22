@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaCashRegister, FaBoxes, FaUsers, FaChartBar, FaUserCircle } from 'react-icons/fa';
+
 
 export default function Layout({ children }) {
   return (
